@@ -10,8 +10,21 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+/* Default styles for the map container */
+.leaflet-container {
+  min-width: 20vw;
+  min-height: 30vh;
+}
+
+/* Media query for screens smaller than 600px */
+@media (max-width: 768px) {
+  .leaflet-container {
+    min-width: 90vw;
+    min-height: 30vh;
+  }
 }
