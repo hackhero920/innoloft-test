@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import Breadcrumb from "../components/Breadcrumb";
 import Button from "../components/common/Button";
 import { getProduct } from "../services/productService";
-import Video from "../components/Video";
-import ProductDetails from "../components/ProductDetails";
 import SideNav from "../components/SideNav";
 import { Link } from "react-router-dom";
 import ProductInfoEdit from "../components/ProductInfoEdit";
+import VideoEdit from "../components/VideoEdit";
+import ProductDetailsEdit from "../components/ProductDetailsEdit";
 
 const ProductEdit = () => {
   const [product, setProduct] = useState({});
@@ -31,7 +31,6 @@ const ProductEdit = () => {
   const extractAddress = () => {
     if (product.company) {
       const { address } = product.company;
-      console.log(address);
       const { street, house, zipCode, city, country } = address;
       const fullAddress = `${street} ${house}, ${zipCode} ${city.name}, ${country.name}`;
       return fullAddress;
@@ -72,9 +71,9 @@ const ProductEdit = () => {
           />
 
           {/* Video */}
-          <Video videoId={getVideoId(product.video)} />
+          <VideoEdit product={product} />
 
-          <ProductDetails product={product} />
+          <ProductDetailsEdit product={product} />
         </div>
       </div>
     </div>

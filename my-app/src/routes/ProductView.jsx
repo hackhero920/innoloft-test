@@ -31,7 +31,6 @@ const ProductView = () => {
   const extractAddress = () => {
     if (product.company) {
       const { address } = product.company;
-      console.log(address);
       const { street, house, zipCode, city, country } = address;
       const fullAddress = `${street} ${house}, ${zipCode} ${city.name}, ${country.name}`;
       return fullAddress;
