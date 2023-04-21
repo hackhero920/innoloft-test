@@ -2,7 +2,7 @@ import { HiChevronRight, HiOutlineHome } from "react-icons/hi";
 import home from "../images/home.svg";
 
 const SideNav = ({ product }) => {
-  const { user } = product;
+  const { user } = product || {};
   let name = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`;
 
   return (

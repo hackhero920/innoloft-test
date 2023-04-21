@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Breadcrumb from "../components/Breadcrumb";
 import Button from "../components/common/Button";
-import { getProduct } from "../services/productService";
 import Video from "../components/Video";
 import ProductInfo from "../components/ProductInfo";
 import ProductDetails from "../components/ProductDetails";
 import SideNav from "../components/SideNav";
 import { Link } from "react-router-dom";
+import { fetchProduct } from "../store/productView";
 
 const ProductView = () => {
-  const [product, setProduct] = useState({});
+  const dispatch = useDispatch();
+  const { product } = useSelector((state) => state.productView);
 
   // Extracting the Description
   const extractText = () => {
@@ -46,12 +48,8 @@ const ProductView = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await getProduct();
-      setProduct(result.data);
-    };
-    fetchData();
-  }, []);
+    dispatch(fetchProduct());
+  }, [dispatch]);
 
   return (
     <div className="flex justify-center">

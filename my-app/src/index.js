@@ -1,12 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import Root from "./routes/root";
-import ProductView from "./routes/ProductView";
 import ProductEdit from "./routes/ProductEdit";
+import { configureStore } from "@reduxjs/toolkit";
+import productViewReducer from "./store/productView";
+import ProductView from "./routes/ProductView";
 
 const router = createBrowserRouter([
   {
@@ -25,10 +28,18 @@ const router = createBrowserRouter([
   },
 ]);
 
+const store = configureStore({
+  reducer: {
+    productView: productViewReducer,
+  },
+});
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );
 

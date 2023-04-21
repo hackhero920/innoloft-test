@@ -1,37 +1,33 @@
 import { useEffect, useState } from "react";
-import YouTube from "react-youtube";
-import { editProduct } from "../services/productService";
 import Button from "./common/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { setProduct, editProduct, fetchProduct } from "../store/productView";
 
-const VideoEdit = ({ product }) => {
-  const [currentProduct, setCurrentProduct] = useState({});
+const VideoEdit = () => {
+  const dispatch = useDispatch();
+  const product = useSelector((state) => state.productView.product);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCurrentProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
+    const newProduct = { ...product, [name]: value };
+    dispatch(setProduct(newProduct));
   };
 
   // Handle the cancel button
   const handleCancel = (e) => {
-    setCurrentProduct(product);
+    e.preventDefault();
+    dispatch(setProduct(product));
   };
 
   // Handles the PUT request
   const handleSave = async (e) => {
     e.preventDefault();
-    try {
-      await editProduct(currentProduct.id, currentProduct);
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(editProduct(product));
   };
 
   useEffect(() => {
-    setCurrentProduct(product);
-  }, [product]);
+    dispatch(setProduct(product));
+  }, [dispatch, product]);
 
   return (
     <form
@@ -43,7 +39,7 @@ const VideoEdit = ({ product }) => {
         <input
           type="text"
           name="video"
-          value={currentProduct.video}
+          value={product.video}
           className="p-2 ring-1 rounded ring-[#E5E7EB]"
           onChange={handleInputChange}
         />

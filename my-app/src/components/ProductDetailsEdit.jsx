@@ -2,15 +2,23 @@ import tech from "../images/tech.svg";
 import trl from "../images/trl.svg";
 import model from "../images/model.svg";
 import cost from "../images/cost.svg";
-import { useEffect, useState } from "react";
-import { editProduct } from "../services/productService";
+import { useEffect } from "react";
 import Button from "./common/Button";
 import BadgeEdit from "./common/BadgeEdit";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  editProduct,
+  setProduct,
+  setCategory,
+  setBusinessModel,
+} from "../store/productView";
 
-const ProductDetailsEdit = ({ product }) => {
-  const [currentProduct, setCurrentProduct] = useState({});
-  const [category, setCategory] = useState("");
-  const [businessModel, setBusinessModel] = useState("");
+const ProductDetailsEdit = () => {
+  const dispatch = useDispatch();
+
+  const product = useSelector((state) => state.productView.product);
+  const category = useSelector((state) => state.productView.category);
+  const model = useSelector((state) => state.productView.model);
 
   const handleInputChange = (e) => {
     e.preventDefault();
@@ -24,10 +32,12 @@ const ProductDetailsEdit = ({ product }) => {
           name: value.trim(),
         };
 
-        setCurrentProduct((prevState) => ({
-          ...prevState,
-          categories: [...prevState.categories, newCategory],
-        }));
+        dispatch(
+          setProduct({
+            ...product,
+            categories: [...product.categories, newCategory],
+          })
+        );
 
         e.target.value = "";
       }
@@ -38,79 +48,95 @@ const ProductDetailsEdit = ({ product }) => {
           name: value.trim(),
         };
 
-        setCurrentProduct((prevState) => ({
-          ...prevState,
-          businessModels: [...prevState.businessModels, newBusinessModel],
-        }));
+        dispatch(
+          setProduct({
+            ...product,
+            businessModels: [...product.businessModels, newBusinessModel],
+          })
+        );
 
         e.target.value = "";
       }
 
       if (name === "trl") {
-        const newProduct = { ...currentProduct };
-        newProduct.trl.name = e.target.value;
-        setCurrentProduct(newProduct);
+        const newProduct = {
+          ...product,
+          trl: { ...product.trl, name: e.target.value },
+        };
+        dispatch(setProduct(newProduct));
+        e.target.value = "";
       }
 
       if (name === "investmentEffort") {
-        const newProduct = { ...currentProduct };
-        newProduct.investmentEffort = e.target.value;
-        setCurrentProduct(newProduct);
+        const newProduct = {
+          ...product,
+          investmentEffort: e.target.value,
+        };
+        dispatch(setProduct(newProduct));
+        e.target.value = "";
       }
     }
   };
 
   // Handle the cancel button
   const handleCancel = (e) => {
-    setCurrentProduct(product);
+    dispatch(setProduct(product));
   };
 
   //   Deletes the Offer Details
   const handleRemove = (e, id, detail) => {
     e.preventDefault();
-    const newProduct = { ...currentProduct };
+    let newProduct = { ...product };
 
     switch (detail) {
       case "businessModels":
-        newProduct.businessModels = newProduct.businessModels.filter(
-          (model) => model.id !== id
-        );
+        newProduct = {
+          ...newProduct,
+          businessModels: newProduct.businessModels.filter(
+            (model) => model.id !== id
+          ),
+        };
         break;
 
       case "categories":
-        newProduct.categories = newProduct.categories.filter(
-          (category) => category.id !== id
-        );
+        newProduct = {
+          ...newProduct,
+          categories: newProduct.categories.filter(
+            (category) => category.id !== id
+          ),
+        };
         break;
 
       case "trl":
-        newProduct.trl.name = "";
+        newProduct = {
+          ...newProduct,
+          trl: { ...newProduct.trl, name: "" },
+        };
         break;
 
       case "investmentEffort":
-        newProduct.investmentEffort = "";
+        newProduct = {
+          ...newProduct,
+          investmentEffort: "",
+        };
         break;
 
       default:
         break;
     }
 
-    setCurrentProduct(newProduct);
+    dispatch(setProduct(newProduct));
   };
 
   // Handles the PUT request
   const handleSave = async (e) => {
     e.preventDefault();
-    try {
-      await editProduct(currentProduct.id, currentProduct);
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(editProduct(product));
   };
 
   useEffect(() => {
-    setCurrentProduct(product);
-  }, [product]);
+    dispatch(setProduct(product));
+  }, [dispatch, product]);
 
   return (
     <form
@@ -129,7 +155,7 @@ const ProductDetailsEdit = ({ product }) => {
             <input
               type="text"
               name="categories"
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => dispatch(setCategory(e.target.value))}
               className="p-2 rounded ring-1 ring-[#E5E7EB] focus:outline-none"
             />
             <button
@@ -143,7 +169,7 @@ const ProductDetailsEdit = ({ product }) => {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {currentProduct.categories?.map((item) => (
+            {product.categories?.map((item) => (
               <BadgeEdit
                 onClick={(e) => handleRemove(e, item.id, "categories")}
                 label={item.name}
@@ -163,13 +189,13 @@ const ProductDetailsEdit = ({ product }) => {
             <input
               type="text"
               name="businessModels"
-              onChange={(e) => setBusinessModel(e.target.value)}
+              onChange={(e) => dispatch(setBusinessModel(e.target.value))}
               className="p-2 rounded ring-1 ring-[#E5E7EB] focus:outline-none"
             />
             <button
               onClick={handleInputChange}
               name="businessModels"
-              value={businessModel}
+              value={model}
               className="p-2 rounded ring-1 ring-[#E5E7EB]"
             >
               +
@@ -177,7 +203,7 @@ const ProductDetailsEdit = ({ product }) => {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {currentProduct.businessModels?.map((item) => (
+            {product.businessModels?.map((item) => (
               <BadgeEdit
                 onClick={(e) => handleRemove(e, item.id, "businessModels")}
                 label={item.name}
@@ -215,7 +241,7 @@ const ProductDetailsEdit = ({ product }) => {
           <div className="flex flex-wrap gap-2">
             <BadgeEdit
               onClick={(e) => handleRemove(e, null, "trl")}
-              label={currentProduct.trl?.name}
+              label={product.trl?.name}
             />
           </div>
         </div>
@@ -242,7 +268,7 @@ const ProductDetailsEdit = ({ product }) => {
           <div className="flex flex-wrap gap-2">
             <BadgeEdit
               onClick={(e) => handleRemove(e, null, "investmentEffort")}
-              label={currentProduct.investmentEffort}
+              label={product.investmentEffort}
             />
           </div>
         </div>
