@@ -1,6 +1,8 @@
+import React from "react";
+import PropTypes from "prop-types";
 import remove from "../../images/remove.svg";
 
-const BadgeEdit = ({ label, onClick, name }) => {
+const BadgeEdit = ({ label, onClick }) => {
   return (
     <div
       className={
@@ -15,6 +17,11 @@ const BadgeEdit = ({ label, onClick, name }) => {
       </button>
     </div>
   );
+};
+
+BadgeEdit.propTypes = {
+  onClick: PropTypes.object.isRequired,
+  label: PropTypes.object.isRequired,
 };
 
 export default BadgeEdit;

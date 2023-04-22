@@ -1,11 +1,15 @@
 import http from "./httpService";
 
-const apiUrl = "https://api-test.innoloft.com/product";
+const API_URL = process.env.REACT_APP_API_URL;
 
 export async function getProduct() {
-  return await http.get(`${apiUrl}/6781/`);
+  return await http.get(`${API_URL}/product/6781/`);
 }
 
-export async function editProduct(productId, updatedProduct) {
-  return await http.put(`${apiUrl}/${productId}/`, updatedProduct);
+export async function editProduct(product) {
+  return await http.put(`${API_URL}/product/6781/`, product);
+}
+
+export async function getTrl() {
+  return await http.get(`${API_URL}/trl/`);
 }

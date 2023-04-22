@@ -1,9 +1,15 @@
-import { getProduct } from "../services/productService";
+import getConfig from "../config";
+import { getProduct, getTrl, editProduct } from "../services/productService";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Actions
 const SET_PRODUCT = "SET_PRODUCT";
 const SET_CATEGORY = "SET_CATEGORY";
 const SET_BUSINESSMODEL = "SET_BUSINESSMODEL";
+const SET_CONFIG = "SET_CONFIG";
+const SET_TRL = "SET_TRL";
+const SET_DESCRIPTION = "SET_DESCRIPTION";
 
 // Action creators
 export const setProduct = (product) => ({
@@ -21,18 +27,74 @@ export const setBusinessModel = (model) => ({
   payload: model,
 });
 
+export const setConfig = (data) => ({
+  type: SET_CONFIG,
+  payload: data,
+});
+
+export const setTrl = (trl) => ({
+  type: SET_TRL,
+  payload: trl,
+});
+
+export const setDescription = (description) => ({
+  type: SET_DESCRIPTION,
+  payload: description,
+});
+
 // Thunks
 export const fetchProduct = () => async (dispatch) => {
-  const result = await getProduct();
-  dispatch(setProduct(result.data));
+  try {
+    const result = await getProduct();
+    dispatch(setProduct(result.data));
+  } catch (error) {
+    toast.error("Something went wrong! Try again.");
+    console.error(error);
+  }
 };
 
-export const editProduct = (product) => async (dispatch) => {
+export const fetchTrl = () => async (dispatch) => {
   try {
-    await editProduct(product.id, product);
+    const result = await getTrl();
+    dispatch(setTrl(result.data));
+  } catch (error) {
+    toast.error("Something went wrong! Try again.");
+    console.error(error);
+  }
+};
+
+export const saveProduct = (product) => async (dispatch) => {
+  try {
+    await editProduct(product);
+    toast.success("Saved Successfully!");
     dispatch(setProduct(product));
   } catch (error) {
-    console.log(error);
+    toast.error("Something went wrong! Try again.");
+    console.error(error);
+  }
+};
+
+export const fetchConfig = () => async (dispatch) => {
+  try {
+    const data = await getConfig();
+    dispatch(setConfig(data));
+  } catch (error) {
+    toast.error("Something went wrong! Try again.");
+    console.error(error);
+  }
+};
+
+// Extracting the Description
+export const extractDescription = (product) => async (dispatch) => {
+  if (product.description) {
+    const htmlString = product.description;
+
+    const div = document.createElement("div");
+    div.innerHTML = htmlString;
+
+    let extractedText = div.textContent || div.innerText || "";
+    extractedText = extractedText.replace('console.log("test");', "");
+    dispatch(setDescription(extractedText));
   }
 };
 
@@ -40,7 +102,10 @@ export const editProduct = (product) => async (dispatch) => {
 const initialState = {
   product: {},
   category: "",
+  description: "",
   model: "",
+  config: {},
+  trl: [],
 };
 
 export default function productViewReducer(state = initialState, action) {
@@ -61,6 +126,24 @@ export default function productViewReducer(state = initialState, action) {
       return {
         ...state,
         model: action.payload,
+      };
+
+    case SET_CONFIG:
+      return {
+        ...state,
+        config: action.payload,
+      };
+
+    case SET_TRL:
+      return {
+        ...state,
+        trl: action.payload,
+      };
+
+    case SET_DESCRIPTION:
+      return {
+        ...state,
+        description: action.payload,
       };
 
     default:

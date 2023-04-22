@@ -1,43 +1,33 @@
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setProduct } from "../store/productView";
 
 const Test = ({ product }) => {
-  const [currentProduct, setCurrentProduct] = useState({});
-  const [businessModel, setBusinessModel] = useState("");
-
-  useEffect(() => {
-    setCurrentProduct(product);
-  }, [product]);
+  const dispatch = useDispatch();
+  const { product } = useSelector((state) => state.productView);
+  const { description } = product;
 
   const handleInputChange = (e) => {
-    e.preventDefault();
-    const newBusinessModel = {
-      id: Date.now(),
-      name: value.trim(),
-    };
-
-    setproduct((prevState) => ({
-      ...prevState,
-      businessModels: [...prevState.businessModels, newBusinessModel],
-    }));
-
-    e.target.value = "";
+    const { name, value } = e.target;
+    const updatedProduct = { ...product, [name]: value };
+    dispatch(setProduct(updatedProduct));
   };
 
+  // Handle the cancel button
+  const handleCancel = (e) => {
+    e.preventDefault();
+    console.log(originalProducts.name);
+    console.log(product.name);
+  };
   return (
     <div>
-      <input
-        type="text"
-        name="businessModels"
-        onChange={(e) => setBusinessModel(e.target.value)}
-        className="p-2 rounded ring-1 ring-[#E5E7EB] focus:outline-none"
+      <textarea
+        name="description"
+        value={description}
+        className="px-2 h-[10rem] ring-1 rounded ring-[#E5E7EB]"
+        onChange={handleInputChange}
       />
-      <button
-        onClick={handleInputChange}
-        name="businessModels"
-        value={businessModel}
-        className="p-2 rounded ring-1 ring-[#E5E7EB]"
-      >
-        +
+      <button className="px-4" onClick={handleCancel}>
+        Cancel
       </button>
     </div>
   );

@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
-import { CSSTransition } from "react-transition-group";
+import React from "react";
+import PropTypes from "prop-types";
+import { useState } from "react";
 import { TiThMenu } from "react-icons/ti";
 import Logo from "./common/Logo";
 
-const NavBar = () => {
+const NavBar = ({ config, product }) => {
   const [open, setOpen] = useState(false);
+  const { mainColor, hasUserSection } = config;
+  const { user } = product;
 
   const navItems = [
     {
@@ -21,7 +24,10 @@ const NavBar = () => {
   ];
 
   return (
-    <nav className="text-gray-200 bg-[#272E71] flex-wrap w-full flex items-center tracking-tight justify-between py-2 px-4 md:px-[2rem] lg:px-[8rem] transition-all duration-300 ease-in-out delay-150">
+    <nav
+      style={{ backgroundColor: mainColor }}
+      className={`text-gray-200 flex-wrap w-full flex items-center tracking-tight justify-between py-2 px-2 lg:px-[8rem] transition-all duration-300 ease-in-out delay-150`}
+    >
       <Logo />
       <TiThMenu
         className={`${
@@ -54,10 +60,35 @@ const NavBar = () => {
           </ul>
         </div>
 
-        <div>A B C D</div>
+        {hasUserSection && (
+          <div className="flex items-center gap-2">
+            <img
+              className="w-8 h-8 rounded-full"
+              src={user?.profilePicture}
+              alt=""
+            />
+            <div>
+              {user?.firstName} {user?.lastName}
+            </div>
+          </div>
+        )}
       </section>
     </nav>
   );
+};
+
+NavBar.propTypes = {
+  config: PropTypes.shape({
+    mainColor: PropTypes.string,
+    hasUserSection: PropTypes.bool,
+  }).isRequired,
+  product: PropTypes.shape({
+    user: PropTypes.shape({
+      firstName: PropTypes.string,
+      lastName: PropTypes.string,
+      profilePicture: PropTypes.string,
+    }),
+  }).isRequired,
 };
 
 export default NavBar;

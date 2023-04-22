@@ -1,25 +1,28 @@
+import React from "react";
+import PropTypes from "prop-types";
 import tech from "../images/tech.svg";
-import trl from "../images/trl.svg";
-import model from "../images/model.svg";
+import timer from "../images/timer.svg";
 import cost from "../images/cost.svg";
+import knight from "../images/knight.svg";
 import { useEffect } from "react";
 import Button from "./common/Button";
 import BadgeEdit from "./common/BadgeEdit";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  editProduct,
+  saveProduct,
   setProduct,
   setCategory,
   setBusinessModel,
+  fetchTrl,
 } from "../store/productView";
 
-const ProductDetailsEdit = () => {
+const ProductDetailsEdit = ({ product }) => {
+  const { categories, investmentEffort, businessModels } = product;
   const dispatch = useDispatch();
 
-  const product = useSelector((state) => state.productView.product);
-  const category = useSelector((state) => state.productView.category);
-  const model = useSelector((state) => state.productView.model);
+  const { trl, category, model } = useSelector((state) => state.productView);
 
+  // Handles the Input Change
   const handleInputChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -35,11 +38,10 @@ const ProductDetailsEdit = () => {
         dispatch(
           setProduct({
             ...product,
-            categories: [...product.categories, newCategory],
+            categories: [...categories, newCategory],
           })
         );
-
-        e.target.value = "";
+        dispatch(setCategory(""));
       }
 
       if (name === "businessModels") {
@@ -51,20 +53,19 @@ const ProductDetailsEdit = () => {
         dispatch(
           setProduct({
             ...product,
-            businessModels: [...product.businessModels, newBusinessModel],
+            businessModels: [...businessModels, newBusinessModel],
           })
         );
-
-        e.target.value = "";
+        dispatch(setBusinessModel(""));
       }
 
       if (name === "trl") {
+        const selectedTrl = trl.find((item) => item.name === value);
         const newProduct = {
           ...product,
-          trl: { ...product.trl, name: e.target.value },
+          trl: { ...product.trl, name: value, id: selectedTrl.id },
         };
         dispatch(setProduct(newProduct));
-        e.target.value = "";
       }
 
       if (name === "investmentEffort") {
@@ -73,14 +74,8 @@ const ProductDetailsEdit = () => {
           investmentEffort: e.target.value,
         };
         dispatch(setProduct(newProduct));
-        e.target.value = "";
       }
     }
-  };
-
-  // Handle the cancel button
-  const handleCancel = (e) => {
-    dispatch(setProduct(product));
   };
 
   //   Deletes the Offer Details
@@ -110,7 +105,7 @@ const ProductDetailsEdit = () => {
       case "trl":
         newProduct = {
           ...newProduct,
-          trl: { ...newProduct.trl, name: "" },
+          trl: { ...newProduct.trl, name: "", id: "" },
         };
         break;
 
@@ -131,12 +126,12 @@ const ProductDetailsEdit = () => {
   // Handles the PUT request
   const handleSave = async (e) => {
     e.preventDefault();
-    dispatch(editProduct(product));
+    dispatch(saveProduct(product));
   };
 
   useEffect(() => {
-    dispatch(setProduct(product));
-  }, [dispatch, product]);
+    dispatch(fetchTrl());
+  }, [product]);
 
   return (
     <form
@@ -155,6 +150,7 @@ const ProductDetailsEdit = () => {
             <input
               type="text"
               name="categories"
+              value={category}
               onChange={(e) => dispatch(setCategory(e.target.value))}
               className="p-2 rounded ring-1 ring-[#E5E7EB] focus:outline-none"
             />
@@ -169,8 +165,9 @@ const ProductDetailsEdit = () => {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {product.categories?.map((item) => (
+            {categories?.map((item) => (
               <BadgeEdit
+                key={item.id}
                 onClick={(e) => handleRemove(e, item.id, "categories")}
                 label={item.name}
               />
@@ -181,7 +178,7 @@ const ProductDetailsEdit = () => {
         {/* Business model */}
         <div className="flex flex-col gap-2 md:w-1/2">
           <div className="flex gap-2">
-            <img src={model} alt="" />
+            <img src={knight} alt="" />
             <h1 className="text-base">Business Model</h1>
           </div>
 
@@ -189,6 +186,7 @@ const ProductDetailsEdit = () => {
             <input
               type="text"
               name="businessModels"
+              value={model}
               onChange={(e) => dispatch(setBusinessModel(e.target.value))}
               className="p-2 rounded ring-1 ring-[#E5E7EB] focus:outline-none"
             />
@@ -203,8 +201,9 @@ const ProductDetailsEdit = () => {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {product.businessModels?.map((item) => (
+            {businessModels?.map((item) => (
               <BadgeEdit
+                key={item.id}
                 onClick={(e) => handleRemove(e, item.id, "businessModels")}
                 label={item.name}
               />
@@ -217,26 +216,23 @@ const ProductDetailsEdit = () => {
       <div className="flex flex-col md:flex-row w-full gap-8">
         <div className="flex flex-col gap-2 md:w-1/2">
           <div className="flex gap-2">
-            <img src={trl} alt="" />
+            <img src={timer} alt="" />
             <h1 className="text-base">TRL</h1>
           </div>
-          Copy code
+
           <select
             className="p-2 rounded ring-1 ring-[#E5E7EB] focus:outline-none"
             name="trl"
             onChange={handleInputChange}
-            id="trl"
           >
             <option value="">...</option>
-            <option value="TRL 1">TRL 1</option>
-            <option value="TRL 2">TRL 2</option>
-            <option value="TRL 3">TRL 3</option>
-            <option value="TRL 4">TRL 4</option>
-            <option value="TRL 5">TRL 5</option>
-            <option value="TRL 6">TRL 6</option>
-            <option value="TRL 7">TRL 7</option>
-            <option value="TRL 8">TRL 8</option>
-            <option value="TRL 9">TRL 9</option>
+            {trl.map((item) => (
+              <option key={item.id} value={item.name}>
+                {item.name.length > 10
+                  ? item.name.substr(0, 35) + "..."
+                  : item.name}
+              </option>
+            ))}
           </select>
           <div className="flex flex-wrap gap-2">
             <BadgeEdit
@@ -268,19 +264,20 @@ const ProductDetailsEdit = () => {
           <div className="flex flex-wrap gap-2">
             <BadgeEdit
               onClick={(e) => handleRemove(e, null, "investmentEffort")}
-              label={product.investmentEffort}
+              label={investmentEffort}
             />
           </div>
         </div>
       </div>
       <div className="text-right">
-        <button className="px-4" onClick={handleCancel}>
-          Cancel
-        </button>
         <Button label="Save" />
       </div>
     </form>
   );
+};
+
+ProductDetailsEdit.propTypes = {
+  product: PropTypes.object.isRequired,
 };
 
 export default ProductDetailsEdit;
