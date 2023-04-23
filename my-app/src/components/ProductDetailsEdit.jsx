@@ -66,6 +66,7 @@ const ProductDetailsEdit = ({ product }) => {
           trl: { ...product.trl, name: value, id: selectedTrl.id },
         };
         dispatch(setProduct(newProduct));
+        e.target.value = "";
       }
 
       if (name === "investmentEffort") {
@@ -74,6 +75,7 @@ const ProductDetailsEdit = ({ product }) => {
           investmentEffort: e.target.value,
         };
         dispatch(setProduct(newProduct));
+        e.target.value = "";
       }
     }
   };

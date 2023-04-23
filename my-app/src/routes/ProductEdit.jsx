@@ -22,7 +22,7 @@ const ProductEdit = () => {
   return (
     <div className="flex justify-center">
       <SideNav product={product} config={config} />
-      <div className="flex flex-col max-w-[55rem] justify-center p-2 md:p-4 gap-4 mx-4">
+      <div className="flex flex-col max-w-[55rem] justify-center p-2 md:p-4 gap-4 ">
         <div className="flex items-center justify-between w-full">
           <Breadcrumb />
           <Link to="/product/edit">
