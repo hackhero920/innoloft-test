@@ -1,10 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
 import home from "../images/home.svg";
+import { IoArrowBack } from "react-icons/io5";
+import { Link, useLocation } from "react-router-dom";
 
 const SideNav = ({ product, config }) => {
   const { user, company } = product || {};
   let name = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`;
+
+  const location = useLocation();
+  const isProductEditPage = location.pathname.includes("/edit");
 
   return (
     <>
@@ -23,10 +28,17 @@ const SideNav = ({ product, config }) => {
             </div>
           </div>
           <div className="flex flex-col gap-4 p-4">
-            <div className="flex items-center gap-4">
+            <Link className="flex items-center gap-4" to="/">
               <img src={home} alt="" />
               <h1>Home</h1>
-            </div>
+            </Link>
+
+            {isProductEditPage && (
+              <Link to="/product" className="flex items-center gap-4">
+                <IoArrowBack />
+                <h1>Back</h1>
+              </Link>
+            )}
           </div>
         </div>
       )}
