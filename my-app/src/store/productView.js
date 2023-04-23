@@ -9,7 +9,6 @@ const SET_CATEGORY = "SET_CATEGORY";
 const SET_BUSINESSMODEL = "SET_BUSINESSMODEL";
 const SET_CONFIG = "SET_CONFIG";
 const SET_TRL = "SET_TRL";
-const SET_DESCRIPTION = "SET_DESCRIPTION";
 
 // Action creators
 export const setProduct = (product) => ({
@@ -35,11 +34,6 @@ export const setConfig = (data) => ({
 export const setTrl = (trl) => ({
   type: SET_TRL,
   payload: trl,
-});
-
-export const setDescription = (description) => ({
-  type: SET_DESCRIPTION,
-  payload: description,
 });
 
 // Thunks
@@ -84,20 +78,6 @@ export const fetchConfig = () => async (dispatch) => {
   }
 };
 
-// Extracting the Description
-export const extractDescription = (product) => async (dispatch) => {
-  if (product.description) {
-    const htmlString = product.description;
-
-    const div = document.createElement("div");
-    div.innerHTML = htmlString;
-
-    let extractedText = div.textContent || div.innerText || "";
-    extractedText = extractedText.replace('console.log("test");', "");
-    dispatch(setDescription(extractedText));
-  }
-};
-
 // Reducer
 const initialState = {
   product: {},
@@ -138,12 +118,6 @@ export default function productViewReducer(state = initialState, action) {
       return {
         ...state,
         trl: action.payload,
-      };
-
-    case SET_DESCRIPTION:
-      return {
-        ...state,
-        description: action.payload,
       };
 
     default:

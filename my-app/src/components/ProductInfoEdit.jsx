@@ -2,26 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import LogoSecondary from "../components/common/LogoSecondary";
 import { CiLocationOn } from "react-icons/ci";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setProduct,
-  extractDescription,
-  fetchProduct,
-  saveProduct,
-} from "../store/productView";
+import { useDispatch } from "react-redux";
+import { setProduct, fetchProduct, saveProduct } from "../store/productView";
 import Button from "./common/Button";
 import BadgePatent from "./common/BadgePatent";
 import BadgeDelete from "./common/BadgeDelete";
-import { useEffect } from "react";
 
 const ProductInfoEdit = ({ product }) => {
   const dispatch = useDispatch();
 
-  const { description } = useSelector((state) => state.productView) || "";
-
   const newProduct = { ...product };
 
-  const { user, company, picture, name } = newProduct;
+  const { user, company, picture, name, description } = newProduct;
 
   let fullName = user ? `${user.firstName} ${user.lastName}` : "";
 
@@ -61,10 +53,6 @@ const ProductInfoEdit = ({ product }) => {
     dispatch(saveProduct(newProduct));
   };
 
-  useEffect(() => {
-    dispatch(extractDescription(product));
-  }, [product]);
-
   return (
     <div>
       <form
@@ -79,13 +67,13 @@ const ProductInfoEdit = ({ product }) => {
           <input
             name="name"
             value={name || ""}
-            className="p-2 ring-1 rounded ring-[#E5E7EB] font-bold"
+            className="p-2 ring-1 rounded ring-[#E5E7EB] font-bold focus:outline-none"
             onChange={handleInputChange}
           />
           <textarea
             name="description"
             value={description}
-            className="px-2 h-[10rem] ring-1 rounded ring-[#E5E7EB]"
+            className="px-2 h-[10rem] ring-1 rounded ring-[#E5E7EB] focus:outline-none"
             onChange={handleInputChange}
           />
 
